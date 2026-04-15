@@ -16,13 +16,24 @@ function App() {
     /* console.log("Prodotto nel carrello: ", isProductInCart) */
     if(isProductInCart) {
       console.log("Prodotto già nel carrello")
+      updateProductQuantity(product);
       return;
     }
     setAddedProducts(prev => [...prev, {...product, quantity: 1}]);
   }
   
-  console.log(addedProducts)
+  function updateProductQuantity(product){
+    setAddedProducts(prev => prev.map(cartProduct => cartProduct.name === product.name ? {...cartProduct, quantity: cartProduct.quantity + 1} : cartProduct))
+  }
   
+  function removeFromCart(product){
+    setAddedProducts(prev => prev.filter(cartProduct => cartProduct.name !== product.name ))
+  }
+
+  const total = addedProducts.reduce((acc, product) => acc + (product.price * product.quantity), 0)
+
+  console.log(addedProducts)
+
   return (
     <>
       <h1>Lista dei prodotti</h1>
@@ -45,10 +56,18 @@ function App() {
             <h2>Carrello</h2>
             {
               addedProducts.map((cartProduct, index) => (
-                <p key={index}>{cartProduct.name} - {cartProduct.price.toFixed(2)} € - x{cartProduct.quantity}</p>
-              ))}
+                <>
+                  <p key={index}>{cartProduct.name} - {cartProduct.price.toFixed(2)} € - x{cartProduct.quantity}</p>
+                  <button onClick={() => removeFromCart(cartProduct)}>Rimuovi dal carrello</button>
+                </>
+              ))
+            }
+            <h2>Totale da pagare</h2>
+            <p>{total.toFixed(2)} €</p>
           </>
-        )}
+        )
+      }
+
     </>
   )
 }
