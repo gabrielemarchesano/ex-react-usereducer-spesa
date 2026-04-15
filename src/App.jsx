@@ -1,4 +1,8 @@
+import { useState } from "react"
+
 function App() {
+
+  const [ addedProducts, setAddedProducts ] = useState([]);
 
   const products = [
     { name: 'Mela', price: 0.5 },
@@ -7,6 +11,18 @@ function App() {
     { name: 'Pasta', price: 0.7 }
   ]
 
+  function addToCart(product) {
+    const isProductInCart = addedProducts.some(cartProduct => cartProduct.name === product.name);
+    /* console.log("Prodotto nel carrello: ", isProductInCart) */
+    if(isProductInCart) {
+      console.log("Prodotto già nel carrello")
+      return;
+    }
+    setAddedProducts(prev => [...prev, {...product, quantity: 1}]);
+  }
+  
+  console.log(addedProducts)
+  
   return (
     <>
       <h1>Lista dei prodotti</h1>
@@ -17,10 +33,22 @@ function App() {
               <h2>Prodotto {index + 1}</h2>
               <p>Nome: {product.name}</p>
               <p>Prezzo: {product.price.toFixed(2)} €</p>
+              <button onClick={() => addToCart(product)}>Aggiungi al carrello</button>
             </li>
           ))
         }
       </ul>
+
+      {
+        addedProducts.length > 0 && (
+          <>
+            <h2>Carrello</h2>
+            {
+              addedProducts.map((cartProduct, index) => (
+                <p key={index}>{cartProduct.name} - {cartProduct.price.toFixed(2)} € - x{cartProduct.quantity}</p>
+              ))}
+          </>
+        )}
     </>
   )
 }
